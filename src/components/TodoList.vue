@@ -1,22 +1,19 @@
+import { store } from '../store/store';
 <template>
   <div>
     <!--ul>li*3 -->
     <!-- <ul> -->
     <transition-group name="list" tag="ul">
-      <li
-        v-for="(todoItem, index) in todoList"
-        :key="todoItem.item"
-        class="shadow"
-      >
+      <li v-for="(todoItem, index) in getTodoItems" :key="index" class="shadow">
         <i
           class="fas fa-check checkBtn"
           :class="{ checkBtnCompleted: todoItem.completed }"
-          @click="toggleComplete(todoItem, index)"
+          @click="toggleTodo(todoItem)"
         ></i>
         <span :class="{ textCompleted: todoItem.completed }">{{
           todoItem.item
         }}</span>
-        <span class="removeBtn" @click="removeTodo(todoItem, index)">
+        <span class="removeBtn" @click="removeTodo(todoItem)">
           <i class="fas fa-trash-alt"></i>
         </span>
       </li>
@@ -26,19 +23,32 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+
 export default {
-  props: ["todoList"],
-  data() {
-    return {};
+  // LifeCycle method
+  mounted() {
+    this.$store.dispatch("loadTodoItems");
   },
   /* 사용자 정의 method */
+  computed: {
+    ...mapGetters(["getTodoItems"]),
+  },
   methods: {
-    removeTodo(todoItem, index) {
-      this.$emit("removeEvent", todoItem, index);
+    ...mapActions([`removeTodo`]),
+    toggleTodo(todoItem) {
+      const todo = { ...todoItem, completed: !todoItem.completed };
+      this.$store.dispatch("toggleTodo", todo);
     },
-    toggleComplete(todoItem, index) {
-      this.$emit("toggleEvent", todoItem, index);
-    },
+    // removeTodo(todoItem, index) {
+    //   //this.$emit('removeEvent', todoItem, index);
+    //   this.$store.commit("removeTodo", { todoItem, index });
+    // },
+    // ...mapMutations(["toggleTodo"]),
+    // toggleComplete(todoItem, index) {
+    //   // this.$emit('toggleEvent', todoItem, index);
+    //   this.$store.commit("toggleTodo", { todoItem, index });
+    // },
   },
 };
 </script>
@@ -63,7 +73,6 @@ li {
 .removeBtn {
   margin-left: auto;
   color: #de4343;
-  cursor: pointer;
 }
 .checkBtn {
   line-height: 45px;
@@ -77,7 +86,6 @@ li {
   text-decoration: line-through;
   color: #b3adad;
 }
-
 /* 리스트 아이템 트랜지션 효과*/
 .list-enter-active,
 .list-leave-active {

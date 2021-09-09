@@ -10,7 +10,7 @@
       <i class="fas fa-plus addBtn"></i>
     </span>
     <!-- <button @click="addTodo">add</button> -->
-    <Modal v-if="showModal" @close="showModal = false">
+    <Modal v-if="showModal">
       <!--
             you can use custom content here to overwrite
             default content
@@ -23,7 +23,6 @@
     </Modal>
   </div>
 </template>
-
 
 <script>
 import Modal from "./common/Modal.vue";
@@ -45,7 +44,9 @@ export default {
   methods: {
     addTodo() {
       if (this.newTodoItem !== "") {
-        this.$emit("addEvent", this.newTodoItem);
+        //this.$emit('addEvent', this.newTodoItem);
+        const todo = { item: this.newTodoItem, completed: false };
+        this.$store.dispatch("addTodo", todo);
         this.clearInput();
       } else {
         this.showModal = !this.showModal;
@@ -83,8 +84,10 @@ input:focus {
 .addBtn {
   color: white;
   vertical-align: middle;
+  cursor: pointer;
 }
 .closeModalBtn {
   color: #42b983;
+  cursor: pointer;
 }
 </style>

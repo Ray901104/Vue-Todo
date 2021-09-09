@@ -5,11 +5,15 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   methods: {
-    clearTodo: function () {
-      this.$emit("clearEvent");
-    },
+    ...mapActions(["clearTodo"]),
+    // clearTodo: function () {
+    //this.$emit('clearEvent');
+    //   this.$store.commit("clearTodo");
+    // },
   },
 };
 </script>
